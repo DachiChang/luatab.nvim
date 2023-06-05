@@ -6,24 +6,20 @@ M.title = function(bufnr)
     local filetype = vim.fn.getbufvar(bufnr, '&filetype')
 
     if buftype == 'help' then
-        return 'help:' .. vim.fn.fnamemodify(file, ':t:r')
-    elseif buftype == 'quickfix' then
-        return 'quickfix'
+      return 'help:' .. vim.fn.fnamemodify(file, ':t:r')
     elseif filetype == 'TelescopePrompt' then
-        return 'Telescope'
-    elseif filetype == 'git' then
-        return 'Git'
-    elseif filetype == 'fugitive' then
-        return 'Fugitive'
-    elseif file:sub(file:len()-2, file:len()) == 'FZF' then
-        return 'FZF'
+      return 'Telescope'
+    elseif filetype == 'NvimTree' then
+      return 'NvimTree'
+    elseif filetype == 'tagbar' then
+      return 'TagBar'
     elseif buftype == 'terminal' then
-        local _, mtch = string.match(file, "term:(.*):(%a+)")
-        return mtch ~= nil and mtch or vim.fn.fnamemodify(vim.env.SHELL, ':t')
+      local _, mtch = string.match(file, "term:(.*):(%a+)")
+      return mtch ~= nil and mtch or vim.fn.fnamemodify(vim.env.SHELL, ':t')
     elseif file == '' then
-        return '[No Name]'
+      return '[No Name]'
     else
-        return vim.fn.pathshorten(vim.fn.fnamemodify(file, ':p:~:t'))
+      return vim.fn.pathshorten(vim.fn.fnamemodify(file, ':p:~:t'))
     end
 end
 
@@ -81,10 +77,9 @@ M.cell = function(index)
     local hl = (isSelected and '%#TabLineSel#' or '%#TabLine#')
 
     return hl .. '%' .. index .. 'T' .. ' ' ..
-        M.windowCount(index) ..
+        M.devicon(bufnr, isSelected) .. '%T' ..
         M.title(bufnr) .. ' ' ..
         M.modified(bufnr) ..
-        M.devicon(bufnr, isSelected) .. '%T' ..
         M.separator(index)
 end
 
