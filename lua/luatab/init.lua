@@ -88,7 +88,7 @@ M.cell = function(index)
     local bufnr = buflist[winnr]
     local hl = (isSelected and '%#TabLineSel#' or '%#TabLine#')
 
-    return hl .. '%' .. index .. 'T' .. ' ' .. index .. '. ' ..
+    return hl .. '%' .. index .. 'T' .. ' ' ..
         -- M.devicon(bufnr, isSelected) .. '%T' ..
         M.title(buflist) .. ' ' ..
         -- M.windowCount(index) ..
