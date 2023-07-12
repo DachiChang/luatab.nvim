@@ -1,25 +1,37 @@
 local M = {}
+local winbar_filetype_exclude = {
+    "help",
+    "lazy",
+    "mason",
+    "spectre_panel",
+    "toggleterm",
+    "TelescopePrompt",
+    "TelescopeResults",
+    "NvimTree",
+    "tagbar",
+}
 
-M.title = function(bufnr)
-    local file = vim.fn.bufname(bufnr)
-    local buftype = vim.fn.getbufvar(bufnr, '&buftype')
-    local filetype = vim.fn.getbufvar(bufnr, '&filetype')
+M.title = function(buflist)
+    local title_names = {}
+    local modifier = ""
+    for _, buf in ipairs(buflist) do
+        local file = vim.fn.bufname(buf)
+        local filename = vim.fn.fnamemodify(file, ':t')
+        local filetype = vim.fn.getbufvar(buf, '&filetype')
 
-    if buftype == 'help' then
-      return 'help:' .. vim.fn.fnamemodify(file, ':t:r')
-    elseif filetype == 'TelescopePrompt' then
-      return 'Telescope'
-    elseif filetype == 'NvimTree' then
-      return 'NvimTree'
-    elseif filetype == 'tagbar' then
-      return 'TagBar'
-    elseif buftype == 'terminal' then
-      local _, mtch = string.match(file, "term:(.*):(%a+)")
-      return mtch ~= nil and mtch or vim.fn.fnamemodify(vim.env.SHELL, ':t')
-    elseif file == '' then
-      return '[No Name]'
+        -- filter out unaccept filetype and no filename
+        if not vim.tbl_contains(winbar_filetype_exclude, filetype) and filename ~= "" then
+          if vim.fn.getbufvar(buf, '&modified') == 1 then -- if any file has been modify
+            modifier = " [+]"
+          end
+          table.insert(title_names, filename)
+        end
+    end
+
+    if #title_names == 0 then -- table item is 0
+        return "[No Name]"
     else
-      return vim.fn.pathshorten(vim.fn.fnamemodify(file, ':p:~:t'))
+        return table.concat(title_names, ', ') .. modifier
     end
 end
 
@@ -76,12 +88,12 @@ M.cell = function(index)
     local bufnr = buflist[winnr]
     local hl = (isSelected and '%#TabLineSel#' or '%#TabLine#')
 
-    return hl .. '%' .. index .. 'T' .. ' ' .. index .. ' ' ..
+    return hl .. '%' .. index .. 'T' .. ' ' .. index .. '. ' ..
         -- M.devicon(bufnr, isSelected) .. '%T' ..
-        -- M.title(bufnr) .. ' ' ..
+        M.title(buflist) .. ' ' ..
         -- M.windowCount(index) ..
-        M.modified(bufnr)
-        -- M.separator(index)
+        -- M.modified(bufnr) ..
+        M.separator(index)
 end
 
 M.tabline = function()
