@@ -115,10 +115,10 @@ local setup = function(opts)
 end
 
 local warning = function()
-    error [[ 
+    error [[
 Hi, I've updated luatab.nvim to allow some proper configuration. As a result, I need to make a breaking change to the config. Apologies for the inconvinence.
 If you had:
-    vim.o.tabline = '%!v:lua.require\'luatab\'.tabline()' 
+    vim.o.tabline = '%!v:lua.require\'luatab\'.tabline()'
 please replace it with
     require('luatab').setup({})
 ]]
