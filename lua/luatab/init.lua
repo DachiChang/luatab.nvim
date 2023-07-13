@@ -1,14 +1,6 @@
 local M = {}
-local winbar_filetype_exclude = {
-    "help",
-    "lazy",
-    "mason",
-    "spectre_panel",
-    "toggleterm",
-    "TelescopePrompt",
-    "TelescopeResults",
-    "NvimTree",
-    "tagbar",
+
+M.filterFileType = {
 }
 
 M.title = function(buflist)
@@ -20,7 +12,7 @@ M.title = function(buflist)
         local filetype = vim.fn.getbufvar(buf, '&filetype')
 
         -- filter out unaccept filetype and no filename
-        if not vim.tbl_contains(winbar_filetype_exclude, filetype) and filename ~= "" then
+        if not vim.tbl_contains(M.filterFileType, filetype) and filename ~= "" then
           if vim.fn.getbufvar(buf, '&modified') == 1 then -- if any file has been modify
             modifier = " [+]"
           end
@@ -117,6 +109,7 @@ local setup = function(opts)
     if opts.separator then M.separator = opts.separator end
     if opts.cell then M.cell = opts.cell end
     if opts.tabline then M.tabline = opts.tabline end
+    if opts.filterFileType then M.filterFileType = opts.filterFileType end
 
     vim.opt.tabline = '%!v:lua.require\'luatab\'.helpers.tabline()'
 end
